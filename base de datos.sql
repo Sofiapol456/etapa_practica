@@ -145,7 +145,7 @@ select * from secretarios;
 INSERT INTO secretarios 
 (id, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto, enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, enlace_foto) 
 VALUES 
-('1','Juan David Rodríguez Pérez', '3104567890 ', '', '', '', '', '', '', '', '',''),
+('1','RODRIGUEZ PEREZ JUAN DAVID', '3104567890 ', '', '', '', '', '', '', '', '',''),
 ('2','María Fernanda González López', '3012345678', '', '', '', '', '', '', '', '',''),
 ('3','Andrés Felipe Martínez Ríos', '3209876543', '', '', '', '', '', '', '', '',''),
 ('4','Laura Sofía Torres Ramírez', '3118765432', '', '', '', '', '', '', '', '',''),
