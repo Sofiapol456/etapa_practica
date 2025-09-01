@@ -5,21 +5,24 @@ select database();
 #drop schema funcionarios;
 
 CREATE TABLE funcionarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,  
-    apellidos_nombres VARCHAR(255) NOT NULL,  
-    telefono_institucional VARCHAR(20), 
-    profesion VARCHAR(100),  
-    perfil TEXT, 
-    cargo VARCHAR(100), 
-    decreto VARCHAR(100),  
-    enlace_sigep VARCHAR(255),  
-    correo_electronico_institucional VARCHAR(255),  
-    direccion VARCHAR(255),  
-    horario_trabajo VARCHAR(100),  
-    enlace_foto VARCHAR(255) 
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    apellidos_nombres VARCHAR(255) NOT NULL,
+    telefono_institucional VARCHAR(20),
+    profesion VARCHAR(100),
+    perfil TEXT,
+    cargo VARCHAR(100),
+    decreto VARCHAR(100),
+    enlace_sigep VARCHAR(255),
+    correo_electronico_institucional VARCHAR(255),
+    direccion VARCHAR(255),
+    horario_trabajo VARCHAR(100),
+    enlace_foto VARCHAR(255),
 
-drop table funcionarios;
+    CHECK (CHAR_LENGTH(apellidos_nombres) > 5),
+    CHECK (correo_electronico_institucional LIKE '%@%')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+#drop table funcionarios;
 select * from funcionarios;
 
 INSERT INTO funcionarios 
@@ -136,17 +139,27 @@ CREATE TABLE secretarios (
     correo_electronico_institucional VARCHAR(255),
     direccion VARCHAR(255),
     horario_trabajo VARCHAR(100),
-    enlace_foto VARCHAR(255)
-);
+    enlace_foto VARCHAR(255),
 
-drop table secretarios;
+    id_funcionario INT,  
+
+    CHECK (CHAR_LENGTH(apellidos_nombres) > 5),
+    CHECK (correo_electronico_institucional LIKE '%@%'),
+
+    CONSTRAINT fk_funcionario
+      FOREIGN KEY (id_funcionario) REFERENCES funcionarios(id)
+      ON DELETE SET NULL
+      ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+#drop table secretarios;
 select * from secretarios;
 
 INSERT INTO secretarios 
 (id, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto, enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, enlace_foto) 
 VALUES 
 ('1','RODRIGUEZ PEREZ JUAN DAVID', '3104567890 ', 'CONTADOR', 'Apoyo en tareas contables y administrativas. Manejo de registros, documentos y control financiero.', 'AUXILIAR ADMINISTRATIVO', 'Decreto No. 675 del 5 de julio de 2023', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000001-2001-1/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/juanp_gomez_soy_sena_edu_co/A1B2C3D4E5F6G7H8I9J0KL-MN_OP?e=abc123'),
-('2','GONZALEZ LOPEZ MARIA FERNANDA', '3012345678', 'TRABAJADORA SOCIAL', 'Trabajadora social y ayudante celador municipal, comprometida con la comunidad.', 'CELADOR MUNICIPAL', 'Resolución No. 042 del 15 de febrero de 1995', 'Contrato Individual de Trabajo a Término Indefinido', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000002-2002-2/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/mariae_ruiz_soy_sena_edu_co/B2C3D4E5F6G7H8I9J0KL1M-NO_PQ?e=def456'),
+('2','GONZALEZ LOPEZ MARIA FERNANDA', '3012345678', 'TRABAJADORA SOCIAL', 'Trabajadora social y ayudante celador municipal, comprometida con la comunidad.', 'CELADOR MUNICIPAL', 'Resolución No. 042 del 15 de febrero de 1995', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000002-2002-2/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/mariae_ruiz_soy_sena_edu_co/B2C3D4E5F6G7H8I9J0KL1M-NO_PQ?e=def456'),
 ('3','MARTINEZ RIOS ANDRES FELIPE', '3209876543', 'ASESOR FINANCIERO', 'Asesor financiero profesional universitario con sólida formación académica y experiencia en gestión estratégica de recursos financieros.', 'PROFESIONAL UNIVERSITARIO 03', 'Resolución No. 1039 del 24 de noviembre de 2022', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000003-2003-3/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/pedroc_mora_soy_sena_edu_co/C3D4E5F6G7H8I9J0KL1MN2-OP_QR?e=ghi789'),
 ('4','TORRES RAMIREZ LAURA SOFIA', '3118765432', 'TECNICO EN REDES', 'Técnico en redes y mecánico con habilidades técnicas integrales para mantenimiento y soporte especializado.', 'MECANICO', 'Decreto No. 003 del 01 de enero de 2024', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000004-2004-4/view', 'obraspublicas@sanjosedelguaviare-guaviare.gov.co', 'Calle 9D # 19-50 barrio El Centro', 'Lunes a viernes de 7:00 a.m. a 12:00 m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/luisae_mendez_soy_sena_edu_co/D4E5F6G7H8I9J0KL1MN2O3-PQ_RS?e=jkl012'),
 ('5','HERRERA CASTRO SEBASTIAN', '3123456789', 'TECNICO ELECTRICISTA', 'Técnico electricista y conductor con experiencia en instalaciones eléctricas y manejo seguro de vehículos.', 'CONDUCTOR', 'Resolución No. 663 del 31 de agosto de 2023', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000005-2005-5/view', 'planeacion@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/diegoa_garzon_soy_sena_edu_co/E5F6G7H8I9J0KL1MN2O3P4-QR_ST?e=mno345'),
@@ -154,8 +167,8 @@ VALUES
 ('7','QUINTERO GOMEZ CARLOS ALBERTO', '3141234567', 'TECNICO CONTABLE', 'Técnico Administrativo con experiencia como Secretaria de Despacho, orientada a la gestión eficiente de procesos administrativos y apoyo organizacional.', 'SECRETARIA DE DESPACHO', 'Resolución No. 961 del 8 de noviembre de 2022', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000007-2007-7/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/julianb_ramos_soy_sena_edu_co/G7H8I9J0KL1MN2O3P4Q5R6-ST_UV?e=stu901'),
 ('8','RAMIREZ MORALES VALENTINA', '3156543210', 'TECNICO EN CONSTRUCCIÓN', 'Técnico en construcción con experiencia como celador municipal, comprometido con el cuidado de bienes públicos y el cumplimiento de normas.', 'CELADOR MUNICIPAL', 'Resolución No. 460 del 28 de junio de 2023', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000008-2008-8/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/nataliaf_lopez_soy_sena_edu_co/H8I9J0KL1MN2O3P4Q5R6S7-TU_VW?e=vwx234'),
 ('9','NAVARRO RUIZ DIEGO ALEJANDRO', '3167890123', 'PLOMERO', 'Plomero ayudante con experiencia en apoyo técnico y mantenimiento básico de sistemas hidráulicos.', 'AYUDANTE', 'Decreto No. 012 del 13 de enero de 1998', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000009-2009-9/view', 'obraspublicas@sanjosedelguaviare-guaviare.gov.co', 'Calle 9D # 19-50 barrio El Centro', 'Lunes a viernes de 7:00 a.m. a 12:00 m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/andress_herrera_soy_sena_edu_co/I9J0KL1MN2O3P4Q5R6S7T8-UV_WX?e=yz0123'),
-('10','VARGAS PAREDES NATALIA ANDREA', '3178901234', 'CARPINTERA', 'Carpintera y guardiana municipal con habilidades en trabajo manual y seguridad comunitaria.', 'GUARDIAN MUNICIPAL', 'Contrato Individual de Trabajo a Término Indefinido', 'Resolución No. 950 del 8 de noviembre de 2022', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000010-2010-0/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/monicag_castillo_soy_sena_edu_co/J0KL1MN2O3P4Q5R6S7T8U9-VW_XY?e=abc456'),
-('11','SALAZAR DUARTE JOSE MIGUEL', '3189012345', 'TECNOLOGO EN GESTION EMPRESARIAL', 'Tecnólogo en gestión empresarial y auxiliar de servicios generales con experiencia en administración y apoyo operativo.', 'AUXILAIR SERVICIOS GENERALES', 'Decreto No. 011 del 01 de enero de 2024', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000011-2011-1/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/carlosm_bermudez_soy_sena_edu_co/KL1MN2O3P4Q5R6S7T8U9V0-WX_YZ?e=def789'),
+('10','VARGAS PAREDES NATALIA ANDREA', '3178901234', 'CARPINTERA', 'Carpintera y guardiana municipal con habilidades en trabajo manual y seguridad comunitaria.', 'GUARDIAN MUNICIPAL', 'Contrato Individual de Trabajo a Término Indefinido', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000010-2010-0/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/monicag_castillo_soy_sena_edu_co/J0KL1MN2O3P4Q5R6S7T8U9-VW_XY?e=abc456'),
+('11','SALAZAR DUARTE JOSE MIGUE', '3189012345', 'TECNOLOGO EN GESTION EMPRESARIAL', 'Tecnólogo en gestión empresarial y auxiliar de servicios generales con experiencia en administración y apoyo operativo.', 'AUXILAIR SERVICIOS GENERALES', 'Decreto No. 011 del 01 de enero de 2024', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000011-2011-1/view', 'carcelmunicipal@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/carlosm_bermudez_soy_sena_edu_co/KL1MN2O3P4Q5R6S7T8U9V0-WX_YZ?e=def789'),
 ('12','ROMERO CASTAÑO CAMILA', '3190123456', 'TECNOLOGO EN LOGISTICA', 'Tecnólogo en logística y secretario ejecutivo con habilidades en coordinación administrativa y gestión eficiente de procesos.', 'SECRETARIO EJECUTIVO', 'Resolución No. 1045 del 24 de noviembre de 2022', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000012-2012-2/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/lauraa_perez_soy_sena_edu_co/L1MN2O3P4Q5R6S7T8U9V0W-X_YZ?e=ghi012'),
 ('13','PEÑA ACOSTA SANTIAGO', '3001472580', 'TECNOLOGO EN MANTENIMIENTO INDUSTRIAL', 'Tecnólogo en mantenimiento industrial y profesional universitario 03, especializado en opciótimizan y gestión de procesos industriales.', 'PROFESIONAL UNIVERSITARIO 03', 'Resolución No. 246 del 31 de diciembre de 2024', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000013-2013-3/view', 'obraspublicas@sanjosedelguaviare-guaviare.gov.co', 'Calle 9D # 19-50 barrio El Centro', 'Lunes a viernes de 7:00 a.m. a 12:00 m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/sergiov_torres_soy_sena_edu_co/MN2O3P4Q5R6S7T8U9V0WX1-YZ_AB?e=jkl345'),
 ('14','BELTRAN GUERRERO SARA LUCIA', '3012583690', 'TECNOLOGO EN PRODUCCION AGROPECUARIA', 'Bachiller con experiencia como Jefe de Oficina de Control Interno, enfocado en la supervisión y mejora de procesos administrativos.', 'JEFE OFICINA CONTROL INTERNO D', 'Resolución No. 185 del 26 de junio de 1997', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000014-2014-4/view', 'contactenos@sanjosedelguaviare-guaviare.gov.co ', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/angelar_galvis_soy_sena_edu_co/N2O3P4Q5R6S7T8U9V0WX1Y-ZA_BC?e=mno678'),
@@ -177,11 +190,11 @@ VALUES
 ('30','CASTAÑO PAREDES KAREN VANESSA', '3179012345', 'TÉCNICO AMBIENTAL', 'Técnico ambiental con experiencia como auxiliar en servicios generales.', 'AUXILAIR SERVICIOS GENERALES', 'Resolución No. 987 del 9 de noviembre de 2022', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000030-2030-0/view', 'salud@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/andress_herrera_soy_sena_edu_co/C5D6E7F8G9H0I1J2K3L4M5-OP_QR?e=def789'),
 ('31','TORRES VILLALBA ALEJANDRO', '3180123456', 'BACHILLER', 'Bachiller con experiencia como jefe de oficina de control interno.', 'JEFE OFICINA DE CONTROL INTERNO', 'Decreto No. 145 del 28 de junio de 2024', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000031-2031-1/view', 'transitoytransporte@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 19-115 barrio El Porvenir', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/monicag_castillo_soy_sena_edu_co/D6E7F8G9H0I1J2K3L4M5N6-PQ_RS?e=ghi012'),
 ('32','RODRIGUEZ GOMEZ GABRIELA', '3191234567', 'TECNOLOGO EN GESTIÓN EMPRESARIAL', 'Tecnólogo en gestión empresarial con experiencia como técnico operativo.', 'TÉCNICO OPERATIVO', 'Resolución No. 269 del 21 de julio de 1999', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000032-2032-2/view', 'transitoytransporte@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 19-115 barrio El Porvenir', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/carlosm_bermudez_soy_sena_edu_co/E7F8G9H0I1J2K3L4M5N6O7-QR_ST?e=jkl345'),
-('33','RIOS MORENO MAURICIO', '3002345678', 'TECNOLOGO EN TELECOMUNICACIONES', 'Tecnólogo en gestión ambiental y profesional universitario con enfoque en sostenibilidad.', 'PROFESIONAL UNIVERSITARIO', 'Resolución No. 369 del 29 de mayo de 2023', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000033-2033-3/view', 'hacienda@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Carrera 24 # 7-80, barrio El Centro','https://soysena-my.sharepoint.com/:i:/g/personal/lauraa_perez_soy_sena_edu_co/F8G9H0I1J2K3L4M5N6O7P8-RS_TU?e=mno678'),
-('34','SALAZAR DUARTE LINA MARCELA', '3013456789', 'TECNOLOGO EN GESTIÓN AMBIENTAL', 'Tecnólogo en telecomunicaciones con experiencia como secretario ejecutivo.', 'SECRETARIO EJECUTIVO', 'Resolución No. 665 del 31 de agosto de 2023', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000034-2034-4/view', 'planeacion@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/sergiov_torres_soy_sena_edu_co/G9H0I1J2K3L4M5N6O7P8Q9-ST_UV?e=pqr901'),
+('33','RIOS MORENO MAURICIO', '3002345678', 'TECNOLOGO EN GESTIÓN AMBIENTAL', 'Tecnólogo en gestión ambiental y profesional universitario con enfoque en sostenibilidad.', 'PROFESIONAL UNIVERSITARIO', 'Resolución No. 369 del 29 de mayo de 2023', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000033-2033-3/view', 'hacienda@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Carrera 24 # 7-80, barrio El Centro','https://soysena-my.sharepoint.com/:i:/g/personal/lauraa_perez_soy_sena_edu_co/F8G9H0I1J2K3L4M5N6O7P8-RS_TU?e=mno678'),
+('34','SALAZAR DUARTE LINA MARCELA', '3013456789', 'TECNOLOGO EN TELECOMUNICACIONES', 'Tecnólogo en telecomunicaciones con experiencia como secretario ejecutivo.', 'SECRETARIO EJECUTIVO', 'Resolución No. 665 del 31 de agosto de 2023', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000034-2034-4/view', 'planeacion@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/sergiov_torres_soy_sena_edu_co/G9H0I1J2K3L4M5N6O7P8Q9-ST_UV?e=pqr901'),
 ('35','GIL RINCON OSCAR EDUARDO', '3024567890', 'TECNOLOGO EN CONTABILIDAD Y FINANZAS', 'Tecnólogo en contabilidad y finanzas con experiencia como secretario de despacho.', 'SECRETARIOS DE DESPACHO', 'Resolución No. 945 del 8 de noviembre de 2022', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000035-2035-5/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/angelar_galvis_soy_sena_edu_co/H0I1J2K3L4M5N6O7P8Q9R0-TU_VW?e=stu234'),
 ('36','CARDENAS MEJIA DAYANA', '3035678901', 'TECNOLOGO EN CONTABILIDAD Y FINANZAS', 'Tecnólogo en contabilidad y finanzas con experiencia como ayudante administrativo.', 'AYUDANTE', 'Resolución No. 975 del 8 de noviembre de 2022', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000036-2036-6/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/felipej_rincon_soy_sena_edu_co/I1J2K3L4M5N6O7P8Q9R0S1-UV_WX?e=vwx567'),
-('37','BELTRAN MENDOZA TOMAS', '3046789012', 'TECNOLOGO EN LOGÍSTICA', 'Tecnólogo en logística con esperencia como comisaria de familia.', 'COMISARIO DE FAMILIA MUNICIPAL', 'Contrato Individual de Trabajo a Término Indefinido', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000037-2037-7/view', 'transitoytransporte@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 19-115 barrio El Porvenir', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/danielh_torres_soy_sena_edu_co/J2K3L4M5N6O7P8Q9R0S1T2-VW_XY?e=yz8901'),
+('37','BELTRAN MENDOZA TOMAS', '3046789012', 'TECNOLOGO EN LOGÍSTICA', 'Tecnólogo en logística con experiencia como comisaria de familia.', 'COMISARIO DE FAMILIA MUNICIPAL', 'Contrato Individual de Trabajo a Término Indefinido', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000037-2037-7/view', 'transitoytransporte@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 19-115 barrio El Porvenir', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/danielh_torres_soy_sena_edu_co/J2K3L4M5N6O7P8Q9R0S1T2-VW_XY?e=yz8901'),
 ('38','LOPEZ GUERRERO GABRIELA', '3057890123', 'TECNICO EN MAQUINARIA PESADA', 'Técnico en maquinaria pesada con experiencia como auxiliar administrativo.', 'AUXILIAR ADMINISTRATIVO', 'Resolución No. 042 del 15 de febrero de 1995', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000038-2038-8/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/estefaniac_rojas_soy_sena_edu_co/K3L4M5N6O7P8Q9R0S1T2U3-WX_YZ?e=abc123'),
 ('39','ACOSTA RODRIGUEZ MIGUEL ANGEL', '3068901234', 'TECNICO EN SOLDADURA', 'Técnico en soldadura con experiencia en funciones de profesional universitario 03.', 'PROFESIONAL UNIVERSITARIO 03', 'Decreto No. 237 del 31 de diciembre de 2024', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000039-2039-9/view', 'obraspublicas@sanjosedelguaviare-guaviare.gov.co', 'Calle 9D # 19-50 barrio El Centro', 'Lunes a viernes de 7:00 a.m. a 12:00 m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/kevinl_arias_soy_sena_edu_co/L4M5N6O7P8Q9R0S1T2U3V4-XY_ZA?e=def456'),
 ('40','NAVARRO QUINTERO MARIA JOSE', '3079012345', 'TECNICO EN MANTENIMIENTO DE EQUIPOS DE COMPUTO', 'Técnico en mantenimiento de equipos de cómputo con experiencia como agente de tránsito.', 'AGENTE DE TRANSITO', 'Resolución No. 948 del 8 de noviembre de 2022', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000040-2040-0/view', 'transitoytransporte@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 19-115 barrio El Porvenir', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/marianav_castro_soy_sena_edu_co/M5N6O7P8Q9R0S1T2U3V4W5-YZ_AB?e=ghi789'),
@@ -205,3 +218,35 @@ VALUES
 ('58','LOPEZ SALAZAR JULIANA', '3057891234', 'ADMINISTRADOR FINANCIERO', 'Bachiller con experiencia como Secretaria de Despacho, capacitada en atención administrativa y gestión documental.', 'SECRETARIA DE DESPACHO', 'Resolución No. 1039 del 24 de noviembre de 2022', 'https://www1.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000058-2058-8/view', 'hacienda@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/luisa_fernandez_soy_sena_edu_co/K4L5M6N7O8P9Q0R1S2T3U4-VW_XY?e=qr3456'),
 ('59','ROMERO RINCON KEVIN ANDRES', '3068902345', 'BACHILLER', 'Técnico en Mantenimiento de Motocicletas con experiencia como Auxiliar Administrativo, con habilidades en gestión operativa y apoyo en procesos administrativos.', 'AUXILIAR ADMINISTRATIVO', 'Resolución No. 1135 del 20 de octubre de 2022', 'https://www2.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000059-2059-9/view', 'administrativa@sanjosedelguaviare-guaviare.gov.co', 'Carrera 24 # 7-80, barrio El Centro', 'Lunes a jueves de 8:00 a.m. a 12:30 p.m. y 2:00 a 6:00 p.m. y viernes de 8:00 a.m. a 12:30 p.m. y 2:00 a 5:00 p.m.','https://soysena-my.sharepoint.com/:i:/g/personal/david_moreno_soy_sena_edu_co/L5M6N7O8P9Q0R1S2T3U4V5-WX_YZ?e=st7890'),
 ('60','BELTRAN CARDENAS NATALIA', '3079013456', 'TECNICO EN CONTROL Y SEGURIDAD VIAL', 'Técnico en Control y Seguridad Vial con experiencia como Mecánico, especializado en mantenimiento vehicular y cumplimiento de normas de tránsito.', 'MECÁNICO', 'Resolución No. 2335 del 12 de octubre de 2023', 'https://www3.funcionpublica.gov.co/web/sigep2/hdv/-/directorio/S1000060-2060-0/view', 'obraspublicas@sanjosedelguaviare-guaviare.gov.co', 'Calle 9D # 19-50 barrio El Centro','Lunes a viernes de 7:00 a.m. a 12:00 m. y 2:00 a 5:00 p.m.', 'https://soysena-my.sharepoint.com/:i:/g/personal/carlos_gomez_soy_sena_edu_co/J3K4L5M6N7O8P9Q0R1S2T3-UV_WX?e=op9012');
+
+SELECT 
+    id,
+    apellidos_nombres,
+    telefono_institucional,
+    profesion,
+    perfil,
+    cargo,
+    decreto,
+    enlace_sigep,
+    correo_electronico_institucional,
+    direccion,
+    horario_trabajo,
+    enlace_foto
+FROM funcionarios
+
+UNION
+
+SELECT 
+    id,
+    apellidos_nombres,
+    telefono_institucional,
+    profesion,
+    perfil,
+    cargo,
+    decreto,
+    enlace_sigep,
+    correo_electronico_institucional,
+    direccion,
+    horario_trabajo,
+    enlace_foto
+FROM secretarios;
