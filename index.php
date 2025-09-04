@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Gestión de Personal</title>
-  
-  <!-- Bootstrap  -->
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  
+
   <!-- Carga una hoja de estilos personalizada -->
   <link rel="stylesheet" href="css/estilos.css" />
 </head>
@@ -84,15 +84,17 @@
         <div class="col-md-5">
           <br />
           <h5>Funcionarios Registrados</h5>
-          <table class="table table-striped" id="tablaFuncionarios">
-            <thead>
-              <tr>
-                <th>N</th>
-                <th>Nombre</th>
-              </tr>
-            </thead>
-            <tbody></tbody> 
-          </table>
+          <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc;">
+            <table class="table table-striped" id="tablaFuncionarios">
+              <thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                <tr>
+                  <th>N</th>
+                  <th>Nombre</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -146,27 +148,29 @@
         <div class="col-md-5">
           <br />
           <h5>Secretarios Registrados</h5>
-          <table class="table table-striped" id="tablaSecretarios">
-            <thead>
-              <tr>
-                <th>N</th>
-                <th>Nombre</th>
-              </tr>
-            </thead>
-            <tbody></tbody> 
-          </table>
+          <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc;">
+            <table class="table table-striped" id="tablaSecretarios">
+              <thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                <tr>
+                  <th>N</th>
+                  <th>Nombre</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Carga el JavaScript de Bootstrap para habilitar componentes interactivos -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Carga el JavaScript de Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Scripts de js -->
-  <script src="js/main.js"></script>         
-  <script src="js/funcionario.js"></script>  
-  <script src="js/secretario.js"></script>
-  <script src="js/automatizar.js"></script>   
+<!-- Orden correcto de scripts -->
+<script src="js/funcionarios.js"></script>
+<script src="js/secretarios.js"></script>
+<script src="js/main.js"></script>
+<script src="js/automatizar.js"></script>
 </body>
 </html>
