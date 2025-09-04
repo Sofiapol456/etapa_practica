@@ -25,11 +25,6 @@ CREATE TABLE funcionarios (
 drop table funcionarios;
 select * from funcionarios;
 
-SELECT apellidos_nombres, COUNT(*) as cantidad 
-FROM funcionarios 
-GROUP BY apellidos_nombres 
-HAVING cantidad > 1;
-
 INSERT INTO funcionarios 
 (id, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto, enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, enlace_foto) 
 VALUES 
@@ -157,7 +152,7 @@ CREATE TABLE secretarios (
       ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-#drop table secretarios;
+drop table secretarios;
 select * from secretarios;
 
 INSERT INTO secretarios 
