@@ -1,7 +1,6 @@
-// Espera a que el DOM esté completamente cargado antes de ejecutar el código
 document.addEventListener('DOMContentLoaded', function () {
 
-  // Crea un div para mostrar alertas en pantalla
+  // Crear alerta
   const alertDiv = document.createElement('div');
   alertDiv.className = 'alert';
   alertDiv.style.display = 'none';
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
   alertDiv.style.zIndex = '9999';
   document.body.appendChild(alertDiv);
 
-  // Función para mostrar una alerta con mensajes
   function mostrarAlerta(mensaje, tipo = 'success') {
     alertDiv.textContent = mensaje;
     alertDiv.className = `alert alert-${tipo}`;
@@ -19,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => alertDiv.style.display = 'none', 3000);
   }
 
-  // Función para recargar automáticamente datos según la sección visible
+  // Actualiza la tabla según la sección visible
   function autoRecargarDatos() {
     const seccionFuncionarios = document.getElementById('seccionFuncionarios');
     if (seccionFuncionarios && seccionFuncionarios.style.display === 'block') {
@@ -33,13 +31,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Ejecuta autoRecargarDatos cada 60 segundos
+  // Auto refresh cada 60 segundos (opcional)
   setInterval(autoRecargarDatos, 60000);
 
-  // Intercepta el envío de formularios para mostrar una alerta después del envío
+  // Interceptar formulario
   const interceptarEnvio = (form, tipo) => {
     form.addEventListener('submit', function (e) {
-      e.preventDefault(); 
+      e.preventDefault(); // Previene recarga
 
       const formData = new FormData(form);
 
@@ -47,26 +45,38 @@ document.addEventListener('DOMContentLoaded', function () {
         method: form.method,
         body: formData
       })
-      .then(response => response.text())
-      .then(texto => {
-        if (texto.toLowerCase().includes('correctamente')) {
-          mostrarAlerta(`${tipo} guardado correctamente`);
-        } else {
+        .then(response => response.text())
+        .then(texto => {
+          console.log("Respuesta del servidor:", texto);
+
+          if (texto.toLowerCase().includes('correctamente')) {
+            mostrarAlerta(`${tipo} guardado correctamente`);
+            form.reset(); // ✅ BORRA el formulario
+
+            if (tipo === 'Funcionario') {
+              if (typeof cargarFuncionarios === 'function') {
+                cargarFuncionarios(); // ✅ Refresca tabla
+              }
+            } else {
+              if (typeof cargarSecretarios === 'function') {
+                cargarSecretarios(); // ✅ Refresca tabla
+              }
+            }
+          } else {
+            mostrarAlerta(`Error al guardar ${tipo.toLowerCase()}`, 'danger');
+          }
+        })
+        .catch(error => {
+          console.error('Error al enviar formulario:', error);
           mostrarAlerta(`Error al guardar ${tipo.toLowerCase()}`, 'danger');
-        }
-      })
-      .catch(error => {
-        console.error('Error al enviar formulario:', error);
-        mostrarAlerta(`Error al guardar ${tipo.toLowerCase()}`, 'danger');
-      });
+        });
     });
   };
 
-  // Obtiene los formularios por ID
+  // Aplica a ambos formularios
   const formFuncionario = document.getElementById('formFuncionario');
   const formSecretario = document.getElementById('formSecretario');
 
-  // Si existen, intercepta sus envíos para mostrar alertas personalizadas
   if (formFuncionario) interceptarEnvio(formFuncionario, 'Funcionario');
   if (formSecretario) interceptarEnvio(formSecretario, 'Secretario');
 });
