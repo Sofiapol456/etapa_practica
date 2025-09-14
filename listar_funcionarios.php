@@ -1,20 +1,18 @@
 <?php
-// Incluye el archivo de conexión a la base de datos 
 include 'conexion.php';
 
-// Cabeceras HTTP para indicar tipo de contenido y permitir CORS 
+// Establecer cabeceras para JSON y permitir solicitudes desde cualquier origen
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); 
+header('Access-Control-Allow-Origin: *');
 
-// Consulta SQL para obtener los funcionarios
-$sql = "SELECT id, apellidos_nombres FROM funcionarios ORDER BY id ASC";
+// Consulta SQL para obtener todos los campos, incluido el ID
+$sql = "SELECT id, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto, enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, enlace_foto FROM funcionarios ORDER BY id ASC";
 
-// Ejecuta la consulta
 $result = $conn->query($sql);
 
-// Verifica si la consulta se ejecutó correctamente
+// Verificar si la consulta fue exitosa
 if (!$result) {
-    http_response_code(500); 
+    http_response_code(500);
     echo json_encode([
         'status' => 'error',
         'message' => 'Error al ejecutar la consulta SQL',
@@ -24,17 +22,16 @@ if (!$result) {
     exit;
 }
 
-// Prepara el array de resultados
+// Crear arreglo para almacenar los funcionarios
 $funcionarios = [];
 
 if ($result->num_rows > 0) {
-    // Recorre los resultados y agrega cada fila al array
     while ($row = $result->fetch_assoc()) {
         $funcionarios[] = $row;
     }
 }
 
-// Devuelve la respuesta en formato JSON
+// Enviar respuesta en formato JSON
 echo json_encode([
     'status' => 'success',
     'data' => $funcionarios
