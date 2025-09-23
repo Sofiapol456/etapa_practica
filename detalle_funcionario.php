@@ -1,106 +1,109 @@
 <?php
-// Incluye el archivo de conexión a la base de datos
-include 'conexion.php';
+require_once 'conexion.php';
 
-// Verifica si el parámetro 'id' está presente en la URL y es un número
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    // Si no es válido, muestra un mensaje de error y termina la ejecución
-    echo "ID inválido.";
-    exit;
-}
+$id = $_GET['id_documento'] ?? '';
 
-// Convierte el parámetro 'id' a un entero para evitar inyección SQL
-$id = intval($_GET['id']);
-
-// Prepara la consulta SQL para obtener los datos del funcionario con el id especificado
-$sql = "SELECT * FROM funcionarios WHERE id = ?";
-$stmt = $conn->prepare($sql);
-
-// Vincula el parámetro 'id' a la consulta preparada (tipo entero)
-$stmt->bind_param("i", $id);
-
-// Ejecuta la consulta
+$stmt = $conn->prepare("SELECT * FROM funcionarios WHERE id_documento = ?");
+$stmt->bind_param("s", $id);
 $stmt->execute();
-
-// Obtiene el resultado de la consulta
 $result = $stmt->get_result();
 
-// Verifica si no se encontró ningún funcionario con ese ID
 if ($result->num_rows === 0) {
-    // Si no existe, muestra mensaje y termina la ejecución
     echo "Funcionario no encontrado.";
     exit;
 }
 
-// Obtiene los datos del funcionario como un arreglo asociativo
 $funcionario = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Detalle del Funcionario</title>
-    <!-- Incluye el CSS de Bootstrap para estilos -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>Detalle del Funcionario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
-<body class="container mt-4">
-    <!-- Encabezado con título y botón para volver -->
+<body>
+  <div class="container mt-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Detalle del Funcionario</h2>
-        <a href="index.php" class="btn btn-secondary">← Volver</a>
+      <h3 class="m-0">Datos del Funcionario</h3>
+      <div>
+        <a href="editar_funcionario.php?id_documento=<?= urlencode($id) ?>" class="btn btn-primary">Editar</a>
+        <a href="personal.php" class="btn btn-secondary">Volver</a>
+      </div>
     </div>
 
-    <!-- Tarjeta con la información del funcionario -->
-    <div class="card">
-        <div class="card-body">
-            <!-- Nombre completo del funcionario -->
-            <h4 class="card-title"><?= htmlspecialchars($funcionario['apellidos_nombres']) ?></h4>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <strong>ID Documento:</strong><br>
+        <?= htmlspecialchars($funcionario['id_documento']) ?>
+      </li>
 
-            <!-- Teléfono institucional, muestra "No disponible" si está vacío -->
-            <p><strong>Teléfono Institucional:</strong> <?= htmlspecialchars($funcionario['telefono_institucional']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Apellidos y Nombres:</strong><br>
+        <?= htmlspecialchars($funcionario['apellidos_nombres']) ?>
+      </li>
 
-            <!-- Profesión, con valor por defecto si no existe -->
-            <p><strong>Profesión:</strong> <?= htmlspecialchars($funcionario['profesion']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Teléfono Institucional:</strong><br>
+        <?= htmlspecialchars($funcionario['telefono_institucional']) ?>
+      </li>
 
-            <!-- Perfil, mantiene saltos de línea y muestra valor por defecto -->
-            <p><strong>Perfil:</strong> <?= nl2br(htmlspecialchars($funcionario['perfil'])) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Correo Institucional:</strong><br>
+        <?= htmlspecialchars($funcionario['correo_electronico_institucional']) ?>
+      </li>
 
-            <!-- Cargo -->
-            <p><strong>Cargo:</strong> <?= htmlspecialchars($funcionario['cargo']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Profesión:</strong><br>
+        <?= htmlspecialchars($funcionario['profesion']) ?>
+      </li>
 
-            <!-- Decreto -->
-            <p><strong>Decreto:</strong> <?= htmlspecialchars($funcionario['decreto']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Perfil:</strong><br>
+        <?= nl2br(htmlspecialchars($funcionario['perfil'])) ?>
+      </li>
 
-            <!-- Enlace SIGEP, muestra un enlace solo si está disponible -->
-            <p><strong>Enlace SIGEP:</strong>
-                <?php if (!empty($funcionario['enlace_sigep'])): ?>
-                    <a href="<?= htmlspecialchars($funcionario['enlace_sigep']) ?>" target="_blank" rel="noopener noreferrer">Ver SIGEP</a>
-                <?php else: ?>
-                    No disponible
-                <?php endif; ?>
-            </p>
+      <li class="list-group-item">
+        <strong>Cargo:</strong><br>
+        <?= htmlspecialchars($funcionario['cargo']) ?>
+      </li>
 
-            <!-- Correo institucional -->
-            <p><strong>Correo Institucional:</strong> <?= htmlspecialchars($funcionario['correo_electronico_institucional']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Decreto:</strong><br>
+        <?= htmlspecialchars($funcionario['decreto']) ?>
+      </li>
 
-            <!-- Dirección -->
-            <p><strong>Dirección:</strong> <?= htmlspecialchars($funcionario['direccion']) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Enlace SIGEP:</strong><br>
+        <a href="<?= htmlspecialchars($funcionario['enlace_sigep']) ?>" target="_blank" class="btn btn-sm btn-outline-primary mt-2">Ver SIGEP 🔗</a>
+      </li>
 
-            <!-- Horario de trabajo, con saltos de línea -->
-            <p><strong>Horario:</strong> <?= nl2br(htmlspecialchars($funcionario['horario_trabajo'])) ?: 'No disponible' ?></p>
+      <li class="list-group-item">
+        <strong>Dirección:</strong><br>
+        <?= htmlspecialchars($funcionario['direccion']) ?>
+      </li>
 
-            <!-- Foto, si hay enlace, muestra la imagen en miniatura con enlace -->
-            <p><strong>Foto:</strong><br>
-                <?php if (!empty($funcionario['enlace_foto'])): ?>
-                    <a href="<?= htmlspecialchars($funcionario['enlace_foto']) ?>" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= htmlspecialchars($funcionario['enlace_foto']) ?>" alt="Foto de <?= htmlspecialchars($funcionario['apellidos_nombres']) ?>" style="max-width: 200px;">
-                    </a>
-                <?php else: ?>
-                    No disponible
-                <?php endif; ?>
-            </p>
-        </div>
-    </div>
+      <li class="list-group-item">
+        <strong>Horario de Trabajo:</strong><br>
+        <?= htmlspecialchars($funcionario['horario_trabajo']) ?>
+      </li>
+
+      <li class="list-group-item">
+        <strong>Fecha de Ingreso:</strong><br>
+        <?= htmlspecialchars($funcionario['fecha_ingreso']) ?>
+      </li>
+
+      <?php if (!empty($funcionario['foto_funcionario'])): ?>
+        <li class="list-group-item">
+          <strong>Foto:</strong><br>
+          <img src="uploads/<?= htmlspecialchars($funcionario['foto_funcionario']) ?>" width="150" class="img-thumbnail mt-2" />
+        </li>
+      <?php endif; ?>
+    </ul>
+  </div>
+  <br>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
