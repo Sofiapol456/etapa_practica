@@ -1,100 +1,66 @@
 <?php
-include 'conexion.php'; // Asegúrate de que $conn esté definido aquí como instancia de mysqli
+require_once 'conexion.php'; // Incluimos la conexión
 
-header('Content-Type: application/json');
-
-// Verifica si la solicitud es POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Sanitiza y valida los datos recibidos
-    $apellidos_nombres = htmlspecialchars(trim($_POST['apellidos_nombres'] ?? ''));
-    $telefono_institucional = htmlspecialchars(trim($_POST['telefono_institucional'] ?? ''));
-    $profesion = htmlspecialchars(trim($_POST['profesion'] ?? ''));
-    $perfil = htmlspecialchars(trim($_POST['perfil'] ?? ''));
-    $cargo = htmlspecialchars(trim($_POST['cargo'] ?? ''));
-    $decreto = htmlspecialchars(trim($_POST['decreto'] ?? ''));
-    $enlace_sigep = filter_var(trim($_POST['enlace_sigep'] ?? ''), FILTER_VALIDATE_URL);
-    $correo = filter_var(trim($_POST['correo_electronico_institucional'] ?? ''), FILTER_VALIDATE_EMAIL);
-    $direccion = htmlspecialchars(trim($_POST['direccion'] ?? ''));
-    $horario = htmlspecialchars(trim($_POST['horario_trabajo'] ?? ''));
-    $enlace_foto = filter_var(trim($_POST['enlace_foto'] ?? ''), FILTER_VALIDATE_URL);
-
-    // Validación de campos requeridos
-    if (
-        empty($apellidos_nombres) ||
-        empty($correo) ||
-        !$enlace_sigep ||
-        !$enlace_foto
-    ) {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Campos requeridos inválidos o vacíos."
-        ]);
-        exit;
-    }
-
-    // Consulta preparada para insertar los datos
-    $sql = "INSERT INTO funcionarios (
-                apellidos_nombres, 
-                telefono_institucional, 
-                profesion, 
-                perfil, 
-                cargo, 
-                decreto, 
-                enlace_sigep, 
-                correo_electronico_institucional, 
-                direccion, 
-                horario_trabajo, 
-                enlace_foto
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt === false) {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Error al preparar la consulta: " . $conn->error
-        ]);
-        exit;
-    }
-
-    // Asocia parámetros a la consulta
-    $stmt->bind_param(
-        "sssssssssss",
-        $apellidos_nombres,
-        $telefono_institucional,
-        $profesion,
-        $perfil,
-        $cargo,
-        $decreto,
-        $enlace_sigep,
-        $correo,
-        $direccion,
-        $horario,
-        $enlace_foto
-    );
-
-    // Ejecuta la consulta
-    if ($stmt->execute()) {
-        echo json_encode([
-            "status" => "success",
-            "message" => "Datos guardados correctamente."
-        ]);
-    } else {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Error al guardar los datos: " . $stmt->error
-        ]);
-    }
-
-    // Cierra recursos
-    $stmt->close();
-    $conn->close();
-} else {
-    // Si el método no es POST
-    echo json_encode([
-        "status" => "error",
-        "message" => "Método no permitido. Solo se permite POST."
-    ]);
+// Sanitizar entrada
+function limpiar($dato) {
+    return htmlspecialchars(trim($dato));
 }
+
+// Recoger datos del formulario
+$id_documento = limpiar($_POST['id_documento']);
+$apellidos_nombres = strtoupper(limpiar($_POST['apellidos_nombres']));
+$telefono = limpiar($_POST['telefono_institucional']);
+$profesion = limpiar($_POST['profesion']);
+$perfil = limpiar($_POST['perfil']);
+$cargo = limpiar($_POST['cargo']);
+$decreto = limpiar($_POST['decreto']);
+$enlace_sigep = limpiar($_POST['enlace_sigep']);
+$correo = strtolower(limpiar($_POST['correo_electronico_institucional']));
+$direccion = limpiar($_POST['direccion']);
+$horario = limpiar($_POST['horario_trabajo']);
+
+// Validar correo único
+$verificar = $conn->prepare("SELECT 1 FROM funcionarios WHERE correo_electronico_institucional = ?");
+$verificar->bind_param("s", $correo);
+$verificar->execute();
+$verificar->store_result();
+
+if ($verificar->num_rows > 0) {
+    echo "<script>alert('El correo institucional ya está registrado.'); window.history.back();</script>";
+    exit;
+}
+
+// Procesar foto (si existe)
+$foto_nombre = "";
+if (isset($_FILES['foto_funcionario']) && $_FILES['foto_funcionario']['error'] === UPLOAD_ERR_OK) {
+    $tmp_name = $_FILES['foto_funcionario']['tmp_name'];
+    $foto_nombre = time() . "_" . basename($_FILES['foto_funcionario']['name']);
+    $ruta_destino = "uploads/" . $foto_nombre;
+
+    if (!file_exists("uploads")) {
+        mkdir("uploads", 0777, true);
+    }
+
+    move_uploaded_file($tmp_name, $ruta_destino);
+}
+
+// Insertar datos
+$stmt = $conn->prepare("INSERT INTO funcionarios (
+    id_documento, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto,
+    enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, foto_funcionario
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+$stmt->bind_param("ssssssssssss",
+    $id_documento, $apellidos_nombres, $telefono, $profesion, $perfil, $cargo, $decreto,
+    $enlace_sigep, $correo, $direccion, $horario, $foto_nombre
+);
+
+if ($stmt->execute()) {
+    echo "<script>alert('Funcionario " . $apellidos_nombres . " guardado correctamente.'); window.location.href='personal.php';</script>";
+} else {
+    echo "Error al guardar: " . $stmt->error;
+}
+
+$stmt->close();
+$conn->close();
 ?>
