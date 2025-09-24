@@ -1,132 +1,59 @@
-// Ejecuta el código solo cuando el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", function () {
-    // Cargar la lista completa de funcionarios al cargar la página
-    cargarFuncionarios();
+document.addEventListener("DOMContentLoaded", () => {
+  const tabla = document.querySelector("#tablaFuncionarios tbody");
+  const buscador = document.querySelector("#buscadorFuncionarios");
+  const contador = document.querySelector("#contadorFuncionarios");
 
-    // Obtener el input del buscador de funcionarios
-    const buscador = document.getElementById("buscadorFuncionarios");
+  let funcionarios = [];
 
-    // Si el buscador existe, agregarle un listener para detectar la escritura
-    if (buscador) {
-        buscador.addEventListener("input", function () {
-            const texto = buscador.value.toLowerCase(); 
-            filtrarFuncionarios(texto); 
-        });
-    }
-});
+  const renderizar = (lista) => {
+    tabla.innerHTML = "";
+    lista.forEach(funcionario => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${funcionario.apellidos_nombres}</td>
+        <td>
+          <a href="detalle_funcionario.php?id_documento=${funcionario.id_documento}" class="btn btn-sm btn-info">Ver</a>
+          <a href="editar_funcionario.php?id_documento=${funcionario.id_documento}" class="btn btn-sm btn-warning">Editar</a>
+          <button class="btn btn-sm btn-danger btn-eliminar" data-id="${funcionario.id_documento}">Eliminar</button>
+        </td>
+      `;
+      tabla.appendChild(fila);
+    });
+    contador.textContent = `Total: ${lista.length} funcionario(s)`;
+  };
 
-// Variable global para guardar la lista completa de funcionarios
-let funcionariosGlobal = [];
+  const filtrar = (termino) => {
+    const t = termino.toLowerCase();
+    const filtrados = funcionarios.filter(f =>
+      f.apellidos_nombres.toLowerCase().includes(t) ||
+      f.id_documento.includes(t) ||
+      f.cargo.toLowerCase().includes(t) ||
+      f.perfil.toLowerCase().includes(t) ||
+      f.fecha_ingreso.toLowerCase().includes(t)
+    );
+    renderizar(filtrados);
+  };
 
-/**
- * Carga la lista de funcionarios desde el servidor vía fetch
- */
-function cargarFuncionarios() {
-    fetch("listar_funcionarios.php")
-        .then((response) => response.json()) 
-        .then((data) => {
-            if (data.status === "success") {
-                funcionariosGlobal = data.data; 
-                renderizarFuncionarios(funcionariosGlobal); 
-            } else {
-                console.error("Error al cargar funcionarios:", data.message);
-            }
-        })
-        .catch((error) => {
-            console.error("Error en la solicitud de funcionarios:", error);
-        });
-}
+  buscador.addEventListener("input", () => filtrar(buscador.value));
 
-/**
- * Renderiza la lista de funcionarios en la tabla HTML
- * @param {Array} lista - Lista de funcionarios a mostrar
- */
-function renderizarFuncionarios(lista) {
-    const tbody = document.querySelector("#tablaFuncionarios tbody"); 
-    const contador = document.getElementById("contadorFuncionarios"); 
-
-    tbody.innerHTML = ""; 
-
-    // Crear una fila por cada funcionario
-    lista.forEach((f) => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-            <td><a href="detalle_funcionario.php?id=${f.id}">${f.apellidos_nombres}</a></td>
-            <td>
-                <button class="btn btn-danger btn-sm"
-                    onclick="eliminarFuncionario(${f.id}, '${f.apellidos_nombres}')">
-                    Eliminar
-                </button>
-            </td>
-        `;
-        tbody.appendChild(fila);
+  fetch("obtener_funcionarios.php")
+    .then(res => res.json())
+    .then(data => {
+      funcionarios = data;
+      renderizar(funcionarios);
     });
 
-    // Mostrar la cantidad total de funcionarios renderizados
-    if (contador) {
-        contador.textContent = `Total: ${lista.length} funcionario(s)`;
+  tabla.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn-eliminar")) {
+      const id = e.target.dataset.id;
+      if (confirm("¿Eliminar funcionario?")) {
+        fetch(`eliminar_funcionario.php?id_documento=${id}`)
+          .then(res => res.text())
+          .then(msg => {
+            alert(msg);
+            location.reload();
+          });
+      }
     }
-}
-
-/**
- * Filtra la lista global de funcionarios según el texto ingresado
- * @param {string} texto - Texto de búsqueda
- */
-function filtrarFuncionarios(texto) {
-    const filtrados = funcionariosGlobal.filter((f) =>
-        Object.values(f).some(
-            (v) =>
-                typeof v === "string" && 
-                v.toLowerCase().includes(texto) // 
-        )
-    );
-
-    renderizarFuncionarios(filtrados);
-}
-
-/**
- * Elimina un funcionario por su ID, con confirmación
- * @param {number} id - ID del funcionario a eliminar
- * @param {string} nombreCompleto - Nombre del funcionario 
- */
-function eliminarFuncionario(id, nombreCompleto) {
-    if (!confirm(`¿Estás seguro de que deseas eliminar a ${nombreCompleto}?`)) return;
-
-    // Enviar solicitud de eliminación al servidor
-    fetch(`eliminar_funcionario.php?id=${id}`, { method: 'GET' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                mostrarAlerta(`${nombreCompleto} fue eliminado correctamente.`, 'success');
-                cargarFuncionarios();
-            } else {
-                mostrarAlerta(`Error al eliminar a ${nombreCompleto}`, 'danger');
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            mostrarAlerta(`Error de red al eliminar a ${nombreCompleto}`, 'danger');
-        });
-}
-
-/**
- * Función auxiliar para mostrar mensajes de alerta
- * @param {string} mensaje - Mensaje a mostrar
- * @param {string} tipo - Tipo de alerta ('success', 'danger', etc.)
- */
-function mostrarAlerta(mensaje, tipo) {
-    // Ejemplo básico de implementación:
-    const alertBox = document.createElement("div");
-    alertBox.className = `alert alert-${tipo}`;
-    alertBox.textContent = mensaje;
-
-    // Agregar al DOM, en algún contenedor visible
-    const container = document.getElementById("alertContainer");
-    if (container) {
-        container.appendChild(alertBox);
-        // Ocultar automáticamente después de unos segundos
-        setTimeout(() => container.removeChild(alertBox), 4000);
-    } else {
-        alert(mensaje); 
-    }
-}
+  });
+});
