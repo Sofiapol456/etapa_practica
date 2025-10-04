@@ -1,12 +1,10 @@
 <?php
-require_once 'conexion.php'; // Incluimos la conexión
+require_once 'conexion.php';
 
-// Sanitizar entrada
 function limpiar($dato) {
     return htmlspecialchars(trim($dato));
 }
 
-// Recoger datos del formulario
 $id_documento = limpiar($_POST['id_documento']);
 $apellidos_nombres = strtoupper(limpiar($_POST['apellidos_nombres']));
 $telefono = limpiar($_POST['telefono_institucional']);
@@ -19,7 +17,6 @@ $correo = strtolower(limpiar($_POST['correo_electronico_institucional']));
 $direccion = limpiar($_POST['direccion']);
 $horario = limpiar($_POST['horario_trabajo']);
 
-// Validar correo único
 $verificar = $conn->prepare("SELECT 1 FROM funcionarios WHERE correo_electronico_institucional = ?");
 $verificar->bind_param("s", $correo);
 $verificar->execute();
@@ -30,7 +27,6 @@ if ($verificar->num_rows > 0) {
     exit;
 }
 
-// Procesar foto (si existe)
 $foto_nombre = "";
 if (isset($_FILES['foto_funcionario']) && $_FILES['foto_funcionario']['error'] === UPLOAD_ERR_OK) {
     $tmp_name = $_FILES['foto_funcionario']['tmp_name'];
@@ -44,7 +40,6 @@ if (isset($_FILES['foto_funcionario']) && $_FILES['foto_funcionario']['error'] =
     move_uploaded_file($tmp_name, $ruta_destino);
 }
 
-// Insertar datos
 $stmt = $conn->prepare("INSERT INTO funcionarios (
     id_documento, apellidos_nombres, telefono_institucional, profesion, perfil, cargo, decreto,
     enlace_sigep, correo_electronico_institucional, direccion, horario_trabajo, foto_funcionario
