@@ -8,7 +8,6 @@
 </head>
 <body>
   <div class="container mt-4">
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
       <div class="container-fluid d-flex justify-content-between">
         <a class="navbar-brand" href="#">Gestión de Personal</a>
@@ -17,7 +16,6 @@
     </nav>
 
     <div class="row">
-      <!-- Formulario -->
       <div class="col-md-7">
         <h5>Agregar Funcionarios</h5>
         <form id="formFuncionario" action="guardar_funcionario.php" method="POST" enctype="multipart/form-data">
@@ -52,7 +50,6 @@
         </form>
       </div>
 
-      <!-- Lista de Funcionarios -->
       <div class="col-md-5">
         <h5>Funcionarios Registrados</h5>
         <p id="contadorFuncionarios" class="text-muted">Total: 0 funcionario(s)</p>
@@ -75,7 +72,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/validacion_formulario.js"></script>
   <script src="js/sesion.js"></script>
